@@ -52,13 +52,14 @@ func (p *plug) Init(cfg *viper.Viper) error {
 			&policy.HasLicenseCheck{},
 			policy.NewHasUniqueTagCheck(""), // TODO(Jose): DockerConfigPath stubbed for this PoC
 			&policy.MaxLayersCheck{},
+			&policy.HasNoProhibitedPackagesCheck{},
+			&policy.HasRequiredLabelsCheck{},
+			&policy.RunAsNonRootCheck{},
 			policy.NewBasedOnUbiCheck(pyxis.NewPyxisClient(
 				defaults.DefaultPyxisHost,
 				"", // TODO(Jose): Pyxis API Token stubbed for this PoC
 				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
 				&http.Client{Timeout: 60 * time.Second})),
-			&policy.HasRequiredLabelsCheck{},
-			&policy.RunAsNonRootCheck{},
 		},
 		Platform:  "amd64",
 		IsScratch: false,
