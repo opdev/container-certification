@@ -50,13 +50,14 @@ func (p *plug) Init(cfg *viper.Viper) error {
 		Image:        p.image,
 		Checks: []types.Check{
 			&policy.HasLicenseCheck{},
+			policy.NewHasUniqueTagCheck(""), // TODO(Jose): DockerConfigPath stubbed for this PoC
+			&policy.MaxLayersCheck{},
 			policy.NewBasedOnUbiCheck(pyxis.NewPyxisClient(
 				defaults.DefaultPyxisHost,
 				"", // TODO(Jose): Pyxis API Token stubbed for this PoC
 				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
 				&http.Client{Timeout: 60 * time.Second})),
-			&policy.MaxLayersCheck{},
-			policy.NewHasUniqueTagCheck(""), // TODO(Jose): DockerConfigPath stubbed for this PoC
+			&policy.HasRequiredLabelsCheck{},
 		},
 		Platform:  "amd64",
 		IsScratch: false,
