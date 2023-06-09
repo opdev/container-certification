@@ -58,6 +58,7 @@ func (p *plug) Init(cfg *viper.Viper) error {
 				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
 				&http.Client{Timeout: 60 * time.Second})),
 			&policy.HasRequiredLabelsCheck{},
+			&policy.RunAsNonRootCheck{},
 		},
 		Platform:  "amd64",
 		IsScratch: false,
