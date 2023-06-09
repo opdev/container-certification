@@ -1,0 +1,59 @@
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# openscap vulnerability report
+vuln.html
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin
+knex
+!cmd/knex
+knex-*
+
+# Config files
+config.yaml
+
+# Log files
+*.log
+results.json
+cert-image.json
+rpm-manifest.json
+results-junit.xml
+*CatalogSource.json
+*Namespace.json
+*OperatorGroup.json
+*Subscription.json
+*BasicSpecCheck.json
+*OlmSuiteCheck.json
+hashes.txt
+artifacts.tar
+
+# E2E customzied env log file.
+sgol.txt
+
+# E2E testing artifacts dir
+e2e_test_artifacts/
+
+# But we don't want to ignore the artifacts package
+!/certification/artifacts
+
+# editor and IDE paraphernalia
+.idea
+*.swp
+*.swo
+*~
+.vscode
+
+# MacOS related artifacts
+.DS_Store
+
+# Vagrant
+.vagrant
