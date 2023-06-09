@@ -55,6 +55,7 @@ func (p *plug) Init(cfg *viper.Viper) error {
 				"", // TODO(Jose): Pyxis API Token stubbed for this PoC
 				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
 				&http.Client{Timeout: 60 * time.Second})),
+			&policy.MaxLayersCheck{},
 		},
 		Platform:  "amd64",
 		IsScratch: false,
