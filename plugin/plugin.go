@@ -56,6 +56,7 @@ func (p *plug) Init(cfg *viper.Viper) error {
 				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
 				&http.Client{Timeout: 60 * time.Second})),
 			&policy.MaxLayersCheck{},
+			policy.NewHasUniqueTagCheck(""), // TODO(Jose): DockerConfigPath stubbed for this PoC
 		},
 		Platform:  "amd64",
 		IsScratch: false,

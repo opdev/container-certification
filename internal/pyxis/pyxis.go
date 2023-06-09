@@ -11,7 +11,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/shurcooL/graphql"
 
-	"github.com/opdev/container-certification/internal/log"
+	"github.com/opdev/knex/log"
 )
 
 const (

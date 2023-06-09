@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/opdev/container-certification/internal/log"
+	"github.com/opdev/knex/log"
 	"github.com/opdev/knex/types"
 
 	"github.com/go-logr/logr"

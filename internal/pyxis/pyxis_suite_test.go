@@ -14,7 +14,7 @@ import (
 	. "github.com/onsi/ginkgo/v2/dsl/core"
 	. "github.com/onsi/gomega"
 
-	"github.com/opdev/container-certification/internal/log"
+	"github.com/opdev/knex/log"
 )
 
 func TestPyxis(t *testing.T) {

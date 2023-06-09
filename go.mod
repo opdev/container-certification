@@ -11,7 +11,7 @@ require (
 	github.com/knqyf263/go-rpmdb v0.0.0-20230517124904-b97c85e63254
 	github.com/onsi/ginkgo/v2 v2.9.5
 	github.com/onsi/gomega v1.27.7
-	github.com/opdev/knex v0.0.0-20230609182223-141d41226f35
+	github.com/opdev/knex v0.0.0-20230609210335-81c7be09f108
 	github.com/redhat-openshift-ecosystem/openshift-preflight v0.0.0-20230523134535-51af09a44662
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29
 	github.com/spf13/viper v1.15.0

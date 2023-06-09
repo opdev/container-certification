@@ -23,7 +23,7 @@ import (
 
 	"github.com/opdev/container-certification/internal/authn"
 	"github.com/opdev/container-certification/internal/defaults"
-	"github.com/opdev/container-certification/internal/log"
+	"github.com/opdev/knex/log"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/rpm"
 	"github.com/opdev/knex/types"
