@@ -3,10 +3,14 @@ package plugin
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/opdev/container-certification/internal/crane"
+	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/opdev/container-certification/internal/policy"
+	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/writer"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
@@ -44,10 +48,17 @@ func (p *plug) Init(cfg *viper.Viper) error {
 	p.engine = &crane.CraneEngine{
 		DockerConfig: "",
 		Image:        p.image,
-		Checks:       []types.Check{&policy.HasLicenseCheck{}},
-		Platform:     "amd64",
-		IsScratch:    false,
-		Insecure:     false,
+		Checks: []types.Check{
+			&policy.HasLicenseCheck{},
+			policy.NewBasedOnUbiCheck(pyxis.NewPyxisClient(
+				defaults.DefaultPyxisHost,
+				"", // TODO(Jose): Pyxis API Token stubbed for this PoC
+				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
+				&http.Client{Timeout: 60 * time.Second})),
+		},
+		Platform:  "amd64",
+		IsScratch: false,
+		Insecure:  false,
 	}
 	return nil
 }

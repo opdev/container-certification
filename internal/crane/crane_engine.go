@@ -22,6 +22,7 @@ import (
 	"github.com/go-logr/logr"
 
 	"github.com/opdev/container-certification/internal/authn"
+	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/opdev/container-certification/internal/log"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/rpm"
@@ -525,7 +526,7 @@ func writeCertImage(ctx context.Context, imageRef types.ImageReference) error {
 
 	artifactWriter := artifacts.WriterFromContext(ctx)
 	if artifactWriter != nil {
-		fileName, err := artifactWriter.WriteFile(DefaultCertImageFilename, bytes.NewReader(certImageJSON))
+		fileName, err := artifactWriter.WriteFile(defaults.DefaultCertImageFilename, bytes.NewReader(certImageJSON))
 		if err != nil {
 			return fmt.Errorf("failed to save file to artifacts directory: %w", err)
 		}
@@ -597,7 +598,7 @@ func writeRPMManifest(ctx context.Context, containerFSPath string) error {
 	}
 
 	if artifactWriter := artifacts.WriterFromContext(ctx); artifactWriter != nil {
-		fileName, err := artifactWriter.WriteFile(DefaultRPMManifestFilename, bytes.NewReader(rpmManifestJSON))
+		fileName, err := artifactWriter.WriteFile(defaults.DefaultRPMManifestFilename, bytes.NewReader(rpmManifestJSON))
 		if err != nil {
 			return fmt.Errorf("failed to save file to artifacts directory: %w", err)
 		}
@@ -720,13 +721,3 @@ func retryOnceAfter(t time.Duration) crane.Option {
 // func RootExceptionContainerPolicy(ctx context.Context) []string {
 // 	return checkNamesFor(ctx, policy.PolicyRoot)
 // }
-
-var (
-	DefaultCertImageFilename    = "cert-image.json"
-	DefaultRPMManifestFilename  = "rpm-manifest.json"
-	DefaultTestResultsFilename  = "results.json"
-	DefaultArtifactsTarFileName = "artifacts.tar"
-	DefaultPyxisHost            = "catalog.redhat.com/api/containers"
-	DefaultPyxisEnv             = "prod"
-	SystemdDir                  = "/etc/systemd/system"
-)
