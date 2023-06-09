@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/bombsimon/logrusr/v4 v4.0.0
 	github.com/docker/cli v24.0.1+incompatible
 	github.com/glebarez/go-sqlite v1.21.1
 	github.com/go-logr/logr v1.2.4
@@ -14,6 +15,8 @@ require (
 	github.com/opdev/knex v0.0.0-20230609210335-81c7be09f108
 	github.com/redhat-openshift-ecosystem/openshift-preflight v0.0.0-20230523134535-51af09a44662
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29
+	github.com/sirupsen/logrus v1.9.2
+	github.com/spf13/afero v1.9.5
 	github.com/spf13/viper v1.15.0
 )
 
@@ -39,8 +42,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/sirupsen/logrus v1.9.2 // indirect
-	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect

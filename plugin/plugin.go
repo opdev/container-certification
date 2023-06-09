@@ -55,6 +55,7 @@ func (p *plug) Init(cfg *viper.Viper) error {
 			&policy.HasNoProhibitedPackagesCheck{},
 			&policy.HasRequiredLabelsCheck{},
 			&policy.RunAsNonRootCheck{},
+			&policy.HasModifiedFilesCheck{},
 			policy.NewBasedOnUbiCheck(pyxis.NewPyxisClient(
 				defaults.DefaultPyxisHost,
 				"", // TODO(Jose): Pyxis API Token stubbed for this PoC
