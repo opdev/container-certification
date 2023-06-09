@@ -8,7 +8,7 @@ import (
 	"github.com/opdev/container-certification/internal/crane"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/writer"
-	"github.com/opdev/knex/plugin"
+	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
 	"github.com/spf13/viper"
 )
