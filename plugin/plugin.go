@@ -9,13 +9,18 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/opdev/container-certification/internal/crane"
 	"github.com/opdev/container-certification/internal/defaults"
+	"github.com/opdev/container-certification/internal/flags"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/writer"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
+
+// Assert that we implement the Plugin interface.
+var _ plugin.Plugin = NewPlugin()
 
 var vers = semver.MustParse("0.0.1")
 
@@ -25,13 +30,29 @@ func init() {
 
 type plug struct {
 	writer.FileWriter
+	flags *pflag.FlagSet
 
 	image  string
 	engine *crane.CraneEngine
 }
 
 func NewPlugin() *plug {
-	return &plug{}
+	p := plug{}
+	p.initializeFlagSet()
+	return &p
+}
+
+func (p *plug) initializeFlagSet() {
+	// NOTE(komish): This is borrowed from Cobra for this PoC.
+	if p.flags == nil {
+		p.flags = pflag.NewFlagSet(p.Name(), pflag.ContinueOnError)
+		// if p.flagErrorBuf == nil {
+		// 	p.flagErrorBuf = new(bytes.Buffer)
+		// }
+		// p.flags.SetOutput(p.flagErrorBuf)
+	}
+
+	flags.BindFlagDockerConfigFilePath(p.flags)
 }
 
 func (p *plug) Register() error {
@@ -67,6 +88,10 @@ func (p *plug) Init(cfg *viper.Viper) error {
 		Insecure:  false,
 	}
 	return nil
+}
+
+func (p *plug) Flags() *pflag.FlagSet {
+	return p.flags
 }
 
 func (p *plug) Version() semver.Version {
