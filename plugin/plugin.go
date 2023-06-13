@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/go-logr/logr"
 	"github.com/opdev/container-certification/internal/crane"
 	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/opdev/container-certification/internal/flags"
@@ -31,6 +32,7 @@ func init() {
 
 type plug struct {
 	writer.FileWriter
+	logger *logr.Logger
 
 	image  string
 	engine *crane.CraneEngine
@@ -50,8 +52,9 @@ func (p *plug) Name() string {
 	return "Container Certification"
 }
 
-func (p *plug) Init(cfg *viper.Viper, args []string) error {
-	fmt.Println("Init Preflight called")
+func (p *plug) Init(runCfg plugin.RuntimeConfiguration, cfg *viper.Viper, args []string) error {
+	p.logger = runCfg.Logger
+	p.logger.Info("Test the logger", "plugin", "container")
 	if len(args) != 1 {
 		return errors.New("a single argument is required (the container image to test)")
 	}
@@ -61,7 +64,7 @@ func (p *plug) Init(cfg *viper.Viper, args []string) error {
 		Image:        p.image,
 		Checks: []types.Check{
 			&policy.HasLicenseCheck{},
-			policy.NewHasUniqueTagCheck(""), // TODO(Jose): DockerConfigPath stubbed for this PoC
+			policy.NewHasUniqueTagCheck(cfg.GetString("docker-config")), // TODO(Jose): DockerConfigPath stubbed for this PoC
 			&policy.MaxLayersCheck{},
 			&policy.HasNoProhibitedPackagesCheck{},
 			&policy.HasRequiredLabelsCheck{},
