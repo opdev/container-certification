@@ -30,7 +30,6 @@ func init() {
 
 type plug struct {
 	writer.FileWriter
-	flags *pflag.FlagSet
 
 	image  string
 	engine *crane.CraneEngine
@@ -38,21 +37,8 @@ type plug struct {
 
 func NewPlugin() *plug {
 	p := plug{}
-	p.initializeFlagSet()
+	// plugin-related things may happen here.
 	return &p
-}
-
-func (p *plug) initializeFlagSet() {
-	// NOTE(komish): This is borrowed from Cobra for this PoC.
-	if p.flags == nil {
-		p.flags = pflag.NewFlagSet(p.Name(), pflag.ContinueOnError)
-		// if p.flagErrorBuf == nil {
-		// 	p.flagErrorBuf = new(bytes.Buffer)
-		// }
-		// p.flags.SetOutput(p.flagErrorBuf)
-	}
-
-	flags.BindFlagDockerConfigFilePath(p.flags)
 }
 
 func (p *plug) Register() error {
@@ -90,8 +76,9 @@ func (p *plug) Init(cfg *viper.Viper) error {
 	return nil
 }
 
-func (p *plug) Flags() *pflag.FlagSet {
-	return p.flags
+func (p *plug) BindFlags(f *pflag.FlagSet) *pflag.FlagSet {
+	flags.BindFlagDockerConfigFilePath(f)
+	return f
 }
 
 func (p *plug) Version() semver.Version {
