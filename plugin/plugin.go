@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -49,9 +50,12 @@ func (p *plug) Name() string {
 	return "Container Certification"
 }
 
-func (p *plug) Init(cfg *viper.Viper) error {
-	fmt.Println("Init called")
-	p.image = "quay.io/opdev/simple-demo-operator:latest" // placeholder for testing
+func (p *plug) Init(cfg *viper.Viper, args []string) error {
+	fmt.Println("Init Preflight called")
+	if len(args) != 1 {
+		return errors.New("a single argument is required (the container image to test)")
+	}
+	p.image = args[0]
 	p.engine = &crane.CraneEngine{
 		DockerConfig: "",
 		Image:        p.image,
