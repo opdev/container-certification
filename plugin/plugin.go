@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -15,8 +16,10 @@ import (
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/writer"
+	"github.com/opdev/knex/log"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -52,9 +55,13 @@ func (p *plug) Name() string {
 	return "Container Certification"
 }
 
-func (p *plug) Init(runCfg plugin.RuntimeConfiguration, cfg *viper.Viper, args []string) error {
-	p.logger = runCfg.Logger
-	p.logger.Info("Test the logger", "plugin", "container")
+func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error {
+	l := logr.FromContextOrDiscard(ctx) // TODO(Jose): Do we want to provide an equivalent function within preflight so plugins don't have to pull this dependency?
+	l.V(log.DBG).Info("DEBUG LOG LEVEL")
+	l.V(log.TRC).Info("TRACE LOG LEVEL")
+	l.Info("INFO LOG LEVEL")
+	aw := artifacts.WriterFromContext(ctx)
+	aw.WriteFile("test-artifact", bytes.NewReader([]byte("mycontent")))
 	if len(args) != 1 {
 		return errors.New("a single argument is required (the container image to test)")
 	}
