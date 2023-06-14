@@ -187,6 +187,8 @@ github.com/opdev/knex v0.0.0-20230613221155-81d2945445fc h1:guD7lvyLHJRxUOXhH6kT
 github.com/opdev/knex v0.0.0-20230613221155-81d2945445fc/go.mod h1:gpo1vsW7gX6zCJERqFYlj9X8U7owBacaSGegrkArKCE=
 github.com/opdev/knex v0.0.0-20230613221606-ec8823857e15 h1:JFQhSaq5+zPCYXIyHSTVnjEynkN4VJpHdvHj+PZKlt0=
 github.com/opdev/knex v0.0.0-20230613221606-ec8823857e15/go.mod h1:btiS1LXdpygnEW9Nh/HekYRndJPfSy6xjj80dTHhLio=
+github.com/opdev/knex v0.0.0-20230614150520-ff5f7fd612df h1:F28prrKTKuNxDzSY2KITvyAibUR9l76ZnrTVEJgv1bc=
+github.com/opdev/knex v0.0.0-20230614150520-ff5f7fd612df/go.mod h1:XlilMEMud9hB9PcHmhD8DVkcWD79xvea8840W8SAv44=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.1.0-rc3 h1:fzg1mXZFj8YdPeNkRXMg+zb88BFV0Ys52cJydRwBkb8=
