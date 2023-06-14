@@ -13,7 +13,6 @@ import (
 	"github.com/opdev/container-certification/internal/flags"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
-	"github.com/opdev/container-certification/internal/writer"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
 	"github.com/spf13/pflag"
@@ -30,9 +29,6 @@ func init() {
 }
 
 type plug struct {
-	writer.FileWriter
-	logger *logr.Logger
-
 	image  string
 	engine *crane.CraneEngine
 }
