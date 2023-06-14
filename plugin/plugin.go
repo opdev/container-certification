@@ -1,10 +1,8 @@
 package plugin
 
 import (
-	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -16,10 +14,8 @@ import (
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/writer"
-	"github.com/opdev/knex/log"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
-	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -57,11 +53,7 @@ func (p *plug) Name() string {
 
 func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error {
 	l := logr.FromContextOrDiscard(ctx) // TODO(Jose): Do we want to provide an equivalent function within preflight so plugins don't have to pull this dependency?
-	l.V(log.DBG).Info("DEBUG LOG LEVEL")
-	l.V(log.TRC).Info("TRACE LOG LEVEL")
-	l.Info("INFO LOG LEVEL")
-	aw := artifacts.WriterFromContext(ctx)
-	aw.WriteFile("test-artifact", bytes.NewReader([]byte("mycontent")))
+	l.Info("Initializing Container Certification")
 	if len(args) != 1 {
 		return errors.New("a single argument is required (the container image to test)")
 	}
@@ -100,7 +92,8 @@ func (p *plug) Version() semver.Version {
 }
 
 func (p *plug) ExecuteChecks(ctx context.Context) error {
-	fmt.Println("Execute Checks Called")
+	l := logr.FromContextOrDiscard(ctx)
+	l.Info("Execute Checks Called")
 	return p.engine.ExecuteChecks(ctx)
 }
 
@@ -108,7 +101,8 @@ func (p *plug) Results(ctx context.Context) types.Results {
 	return p.engine.Results(ctx)
 }
 
-func (p *plug) Submit(_ context.Context) error {
-	fmt.Println("Submit called")
+func (p *plug) Submit(ctx context.Context) error {
+	l := logr.FromContextOrDiscard(ctx)
+	l.Info("Submit called")
 	return nil
 }
