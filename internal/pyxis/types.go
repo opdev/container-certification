@@ -94,7 +94,6 @@ type RPM struct {
 	Summary      string `json:"summary,omitempty"`
 	Version      string `json:"version,omitempty"`
 }
-
 type CertProject struct {
 	ID                  string    `json:"_id,omitempty"`
 	CertificationStatus string    `json:"certification_status" default:"In Progress"`
@@ -102,6 +101,11 @@ type CertProject struct {
 	Name                string    `json:"name"`           // required
 	ProjectStatus       string    `json:"project_status"` // required
 	Type                string    `json:"type,omitempty"` // required
+}
+
+func (cp CertProject) ScratchProject() bool {
+	// ScratchProject returns true if the CertProject is designated Scratch in Pyxis.
+	return cp.Container.Type == "scratch" || cp.Container.OsContentType == "Scratch Image"
 }
 
 type Container struct {

@@ -3,12 +3,17 @@ package plugin
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
+	preflighterr "github.com/redhat-openshift-ecosystem/openshift-preflight/errors"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-logr/logr"
+	"github.com/opdev/container-certification/internal/checks"
 	"github.com/opdev/container-certification/internal/crane"
+	"github.com/opdev/container-certification/internal/exceptions"
 	"github.com/opdev/container-certification/internal/flags"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
@@ -46,6 +51,10 @@ func (p *plug) Name() string {
 	return "Container Certification"
 }
 
+func (p *plug) hasPyxisData(cfg *viper.Viper) bool {
+	return cfg.GetString(flags.KeyPyxisHost) != "" && cfg.GetString(flags.KeyPyxisAPIToken) != "" && cfg.GetString(flags.KeyCertProjectID) != ""
+}
+
 func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error {
 	l := logr.FromContextOrDiscard(ctx) // TODO(Jose): Do we want to provide an equivalent function within preflight so plugins don't have to pull this dependency?
 	l.Info("Initializing Container Certification")
@@ -53,27 +62,47 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		return errors.New("a single argument is required (the container image to test)")
 	}
 
+	//Note(Jose): This is policy resolution code is ripped directly from the Preflight library code.
+	pol := policy.PolicyContainer
+
+	// If we have enough Pyxis information, resolve the policy.
+	if p.hasPyxisData(cfg) {
+		pyxisClient := pyxis.NewPyxisClient(
+			cfg.GetString(flags.KeyPyxisHost),
+			cfg.GetString(flags.KeyPyxisAPIToken),
+			cfg.GetString(flags.KeyCertProjectID),
+			&http.Client{Timeout: 60 * time.Second},
+		)
+
+		override, err := exceptions.GetContainerPolicyExceptions(ctx, pyxisClient)
+		if err != nil {
+			return fmt.Errorf("%w: %s", preflighterr.ErrCannotResolvePolicyException, err)
+		}
+
+		pol = override
+	} else {
+		l.Info("Unable to get policy exceptions for this image because project information was not provided. Proceeding with default container policy.")
+	}
+
+	renderedChecks, err := checks.InitializeContainerChecks(ctx, pol, checks.ContainerCheckConfig{
+		DockerConfig:           cfg.GetString(flags.KeyDockerConfig),
+		PyxisAPIToken:          cfg.GetString(flags.KeyPyxisAPIToken),
+		CertificationProjectID: cfg.GetString(flags.KeyCertProjectID),
+		PyxisHost:              cfg.GetString(flags.KeyPyxisHost),
+	})
+
+	if err != nil {
+		return err
+	}
+
 	p.image = args[0]
 	p.engine = &crane.CraneEngine{
-		DockerConfig: "",
+		DockerConfig: cfg.GetString(flags.KeyDockerConfig),
 		Image:        p.image,
-		Checks: []types.Check{
-			&policy.HasLicenseCheck{},
-			policy.NewHasUniqueTagCheck(cfg.GetString(flags.KeyDockerConfig)),
-			&policy.MaxLayersCheck{},
-			&policy.HasNoProhibitedPackagesCheck{},
-			&policy.HasRequiredLabelsCheck{},
-			&policy.RunAsNonRootCheck{},
-			&policy.HasModifiedFilesCheck{},
-			policy.NewBasedOnUbiCheck(pyxis.NewPyxisClient(
-				cfg.GetString(flags.KeyPyxisHost),
-				cfg.GetString(flags.KeyPyxisAPIToken),
-				cfg.GetString(flags.KeyCertProjectID),
-				&http.Client{Timeout: 60 * time.Second})),
-		},
-		Platform:  "amd64",
-		IsScratch: false,
-		Insecure:  false,
+		Checks:       renderedChecks,
+		Platform:     cfg.GetString(flags.KeyPlatform),
+		IsScratch:    pol == policy.PolicyScratch,
+		Insecure:     false, // TOOD(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
 	}
 	return nil
 }
