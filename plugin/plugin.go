@@ -83,6 +83,7 @@ func (p *plug) BindFlags(f *pflag.FlagSet) *pflag.FlagSet {
 	flags.BindFlagPyxisAPIToken(f)
 	flags.BindFlagPyxisEnv(f)
 	flags.BindFlagPyxisHost(f)
+	flags.BindFlagsImagePlatform(f)
 	return f
 }
 

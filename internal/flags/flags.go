@@ -2,6 +2,7 @@ package flags
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/spf13/pflag"
@@ -29,4 +30,8 @@ func BindFlagPyxisEnv(f *pflag.FlagSet) {
 func BindFlagPyxisHost(f *pflag.FlagSet) {
 	f.String("pyxis-host", "", fmt.Sprintf("Host to use for Pyxis submissions. This will override Pyxis Env. Only set this if you know what you are doing.\n"+
 		"If you do set it, it should include just the host, and the URI path. (env: PFLT_PYXIS_HOST)"))
+}
+
+func BindFlagsImagePlatform(f *pflag.FlagSet) {
+	f.String("platform", runtime.GOARCH, "Architecture of image to pull. Defaults to current platform.")
 }
