@@ -37,7 +37,7 @@ func BindFlagPyxisEnv(f *pflag.FlagSet) {
 }
 
 func BindFlagPyxisHost(f *pflag.FlagSet) {
-	f.String(KeyPyxisHost, "", fmt.Sprintf("Host to use for Pyxis submissions. This will override Pyxis Env. Only set this if you know what you are doing.\n"+
+	f.String(KeyPyxisHost, defaults.DefaultPyxisHost, fmt.Sprintf("Host to use for Pyxis submissions. This will override Pyxis Env. Only set this if you know what you are doing.\n"+
 		"If you do set it, it should include just the host, and the URI path. (env: PFLT_PYXIS_HOST)"))
 }
 
