@@ -8,9 +8,18 @@ import (
 	"github.com/spf13/pflag"
 )
 
+const (
+	KeyDockerConfig  = "docker-config"
+	KeyPyxisAPIToken = "pyxis-api-token"
+	KeyPyxisEnv      = "pyxis-env"
+	KeyPyxisHost     = "pyxis-host"
+	KeyPlatform      = "platform"
+	KeyCertProjectID = "certification-project-id"
+)
+
 func BindFlagDockerConfigFilePath(f *pflag.FlagSet) {
 	f.StringP(
-		"docker-config",
+		KeyDockerConfig,
 		"d",
 		"",
 		"Path to docker config.json file. This value is optional for publicly accessible images.\n"+
@@ -20,18 +29,29 @@ func BindFlagDockerConfigFilePath(f *pflag.FlagSet) {
 }
 
 func BindFlagPyxisAPIToken(f *pflag.FlagSet) {
-	f.String("pyxis-api-token", "", "API token for Pyxis authentication (env: PFLT_PYXIS_API_TOKEN)")
+	f.String(KeyPyxisAPIToken, "", "API token for Pyxis authentication (env: PFLT_PYXIS_API_TOKEN)")
 }
 
 func BindFlagPyxisEnv(f *pflag.FlagSet) {
-	f.String("pyxis-env", defaults.DefaultPyxisEnv, "Env to use for Pyxis submissions.")
+	f.String(KeyPyxisEnv, defaults.DefaultPyxisEnv, "Env to use for Pyxis submissions.")
 }
 
 func BindFlagPyxisHost(f *pflag.FlagSet) {
-	f.String("pyxis-host", "", fmt.Sprintf("Host to use for Pyxis submissions. This will override Pyxis Env. Only set this if you know what you are doing.\n"+
+	f.String(KeyPyxisHost, "", fmt.Sprintf("Host to use for Pyxis submissions. This will override Pyxis Env. Only set this if you know what you are doing.\n"+
 		"If you do set it, it should include just the host, and the URI path. (env: PFLT_PYXIS_HOST)"))
 }
 
 func BindFlagsImagePlatform(f *pflag.FlagSet) {
-	f.String("platform", runtime.GOARCH, "Architecture of image to pull. Defaults to current platform.")
+	f.String(KeyPlatform, runtime.GOARCH, "Architecture of image to pull. Defaults to current platform.")
+}
+
+func BindFlagCertificationProjectID(f *pflag.FlagSet) {
+	f.String(
+		KeyCertProjectID,
+		"",
+		fmt.Sprintf(
+			"Certification Project ID from connect.redhat.com/projects/{certification-project-id}/overview\n"+
+				"URL paramater. This value may differ from the PID on the overview page. (env: PFLT_CERTIFICATION_PROJECT_ID)",
+		),
+	)
 }

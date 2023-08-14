@@ -9,7 +9,6 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-logr/logr"
 	"github.com/opdev/container-certification/internal/crane"
-	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/opdev/container-certification/internal/flags"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
@@ -53,22 +52,23 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 	if len(args) != 1 {
 		return errors.New("a single argument is required (the container image to test)")
 	}
+
 	p.image = args[0]
 	p.engine = &crane.CraneEngine{
 		DockerConfig: "",
 		Image:        p.image,
 		Checks: []types.Check{
 			&policy.HasLicenseCheck{},
-			policy.NewHasUniqueTagCheck(cfg.GetString("docker-config")), // TODO(Jose): DockerConfigPath stubbed for this PoC
+			policy.NewHasUniqueTagCheck(cfg.GetString(flags.KeyDockerConfig)),
 			&policy.MaxLayersCheck{},
 			&policy.HasNoProhibitedPackagesCheck{},
 			&policy.HasRequiredLabelsCheck{},
 			&policy.RunAsNonRootCheck{},
 			&policy.HasModifiedFilesCheck{},
 			policy.NewBasedOnUbiCheck(pyxis.NewPyxisClient(
-				defaults.DefaultPyxisHost,
-				"", // TODO(Jose): Pyxis API Token stubbed for this PoC
-				"", // TODO(Jose): Pyxis Project ID stubbed for this PoC
+				cfg.GetString(flags.KeyPyxisHost),
+				cfg.GetString(flags.KeyPyxisAPIToken),
+				cfg.GetString(flags.KeyCertProjectID),
 				&http.Client{Timeout: 60 * time.Second})),
 		},
 		Platform:  "amd64",
