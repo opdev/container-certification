@@ -80,6 +80,9 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 
 func (p *plug) BindFlags(f *pflag.FlagSet) *pflag.FlagSet {
 	flags.BindFlagDockerConfigFilePath(f)
+	flags.BindFlagPyxisAPIToken(f)
+	flags.BindFlagPyxisEnv(f)
+	flags.BindFlagPyxisHost(f)
 	return f
 }
 
