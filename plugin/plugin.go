@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/opdev/container-certification/internal/config"
 	preflighterr "github.com/redhat-openshift-ecosystem/openshift-preflight/errors"
 
 	"github.com/Masterminds/semver/v3"
@@ -54,7 +55,7 @@ func (p *plug) Name() string {
 }
 
 func (p *plug) hasPyxisData(cfg *viper.Viper) bool {
-	return cfg.GetString(flags.KeyPyxisHost) != "" && cfg.GetString(flags.KeyPyxisAPIToken) != "" && cfg.GetString(flags.KeyCertProjectID) != ""
+	return cfg.GetString(flags.KeyPyxisAPIToken) != "" && cfg.GetString(flags.KeyCertProjectID) != ""
 }
 
 func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error {
@@ -67,10 +68,13 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 	//Note(Jose): This is policy resolution code is ripped directly from the Preflight library code.
 	pol := policy.PolicyContainer
 
+	// determining the pyxis host based on the flags passed in at runtime
+	pyxisHost := config.PyxisHostLookup(cfg.GetString(flags.KeyPyxisEnv), cfg.GetString(flags.KeyPyxisHost))
+
 	// If we have enough Pyxis information, resolve the policy.
 	if p.hasPyxisData(cfg) {
 		pyxisClient := pyxis.NewPyxisClient(
-			cfg.GetString(flags.KeyPyxisHost),
+			pyxisHost,
 			cfg.GetString(flags.KeyPyxisAPIToken),
 			cfg.GetString(flags.KeyCertProjectID),
 			&http.Client{Timeout: 60 * time.Second},
@@ -90,7 +94,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		DockerConfig:           cfg.GetString(flags.KeyDockerConfig),
 		PyxisAPIToken:          cfg.GetString(flags.KeyPyxisAPIToken),
 		CertificationProjectID: cfg.GetString(flags.KeyCertProjectID),
-		PyxisHost:              cfg.GetString(flags.KeyPyxisHost),
+		PyxisHost:              pyxisHost,
 	})
 
 	if err != nil {
