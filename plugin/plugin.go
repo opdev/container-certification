@@ -17,6 +17,7 @@ import (
 	"github.com/opdev/container-certification/internal/flags"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
+	"github.com/opdev/container-certification/internal/submit"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
 	"github.com/spf13/pflag"
@@ -33,6 +34,7 @@ func init() {
 }
 
 type plug struct {
+	config *viper.Viper
 	image  string
 	engine *crane.CraneEngine
 }
@@ -133,5 +135,18 @@ func (p *plug) Results(ctx context.Context) types.Results {
 func (p *plug) Submit(ctx context.Context) error {
 	l := logr.FromContextOrDiscard(ctx)
 	l.Info("Submit called")
-	return nil
+	container := submit.ContainerCertificationSubmitter{
+		CertificationProjectID: p.config.GetString(flags.KeyCertProjectID),
+		Pyxis: submit.NewPyxisClient(
+			ctx,
+			p.config.GetString(flags.KeyCertProjectID),
+			p.config.GetString(flags.KeyPyxisAPIToken),
+			p.config.GetString(flags.KeyPyxisHost),
+		),
+		DockerConfig:     p.config.GetString(flags.KeyDockerConfig),
+		PreflightLogFile: "preflight.log", // TODO: This is probably coming from knex so we need to map this somehow.
+		PyxisEnv:         p.config.GetString(flags.KeyPyxisEnv),
+	}
+
+	return container.Submit(ctx)
 }
