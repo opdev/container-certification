@@ -64,6 +64,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 	if len(args) != 1 {
 		return errors.New("a single argument is required (the container image to test)")
 	}
+	fmt.Println(cfg.GetString(flags.KeyPyxisAPIToken))
 
 	//Note(Jose): This is policy resolution code is ripped directly from the Preflight library code.
 	pol := policy.PolicyContainer
@@ -110,6 +111,10 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		IsScratch:    pol == policy.PolicyScratch,
 		Insecure:     false, // TOOD(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
 	}
+
+	// Note(Jose) store the config so that Submit can use values from it.
+	// Probably want to instead just store the necessary values instead of storing the config.
+	p.config = cfg
 	return nil
 }
 
