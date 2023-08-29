@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/opdev/container-certification/internal/config"
+	"github.com/opdev/container-certification/internal/defaults"
 	preflighterr "github.com/redhat-openshift-ecosystem/openshift-preflight/errors"
 
 	"github.com/Masterminds/semver/v3"
@@ -29,6 +30,8 @@ import (
 var _ plugin.Plugin = NewPlugin()
 
 var vers = semver.MustParse("0.0.1")
+
+var pyxisHost = defaults.DefaultPyxisHost
 
 func init() {
 	plugin.Register("check-container", NewPlugin())
@@ -64,13 +67,12 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 	if len(args) != 1 {
 		return errors.New("a single argument is required (the container image to test)")
 	}
-	fmt.Println(cfg.GetString(flags.KeyPyxisAPIToken))
 
 	//Note(Jose): This is policy resolution code is ripped directly from the Preflight library code.
 	pol := policy.PolicyContainer
 
 	// determining the pyxis host based on the flags passed in at runtime
-	pyxisHost := config.PyxisHostLookup(cfg.GetString(flags.KeyPyxisEnv), cfg.GetString(flags.KeyPyxisHost))
+	pyxisHost = config.PyxisHostLookup(cfg.GetString(flags.KeyPyxisEnv), cfg.GetString(flags.KeyPyxisHost))
 
 	// If we have enough Pyxis information, resolve the policy.
 	if p.hasPyxisData(cfg) {
@@ -151,7 +153,7 @@ func (p *plug) Submit(ctx context.Context) error {
 			ctx,
 			p.config.GetString(flags.KeyCertProjectID),
 			p.config.GetString(flags.KeyPyxisAPIToken),
-			p.config.GetString(flags.KeyPyxisHost),
+			pyxisHost,
 		),
 		DockerConfig:     p.config.GetString(flags.KeyDockerConfig),
 		PreflightLogFile: "preflight.log", // TODO: This is probably coming from knex so we need to map this somehow.
