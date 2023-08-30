@@ -19,7 +19,7 @@ func hasModifiedFilesCmd() *cobra.Command {
 	cmd := cobra.Command{
 		Use:  "has-modified-files",
 		Args: cobra.MinimumNArgs(1),
-		Long: `Run the "hasModifiedFiles" check of Red Hat's Container Certification Policy. This is a debugging tool, and not used for certification. This tool is intended to allow developers to run individual checks of container certification as they develop their images.`,
+		Long: `Run the "HasModifiedFiles" check of Red Hat's Container Certification Policy. This is a debugging tool, and not used for certification. This tool is intended to allow developers to run individual checks of container certification as they develop their images.`,
 		RunE: cli.RunEFunctionWithCheck(&policy.HasModifiedFilesCheck{}),
 	}
 

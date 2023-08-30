@@ -9,17 +9,17 @@ import (
 )
 
 func main() {
-	cmd := hasProhibitedPackagesCmd()
+	cmd := hasNoProhibitedPackagesCmd()
 	if err := cmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func hasProhibitedPackagesCmd() *cobra.Command {
+func hasNoProhibitedPackagesCmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:  "has-prohibited-packages",
+		Use:  "has-no-prohibited-packages",
 		Args: cobra.MinimumNArgs(1),
-		Long: `Run the "hasProhibitedPackages" check of Red Hat's Container Certification Policy. This is a debugging tool, and not used for certification. This tool is intended to allow developers to run individual checks of container certification as they develop their images.`,
+		Long: `Run the "HasNoProhibitedPackages" check of Red Hat's Container Certification Policy. This is a debugging tool, and not used for certification. This tool is intended to allow developers to run individual checks of container certification as they develop their images.`,
 		RunE: cli.RunEFunctionWithCheck(&policy.HasNoProhibitedPackagesCheck{}),
 	}
 
