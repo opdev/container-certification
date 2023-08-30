@@ -69,7 +69,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		return errors.New("a single argument is required (the container image to test)")
 	}
 
-	//Note(Jose): This is policy resolution code is ripped directly from the Preflight library code.
+	// Note(Jose): This is policy resolution code is ripped directly from the Preflight library code.
 	pol := policy.PolicyContainer
 
 	// determining the pyxis host based on the flags passed in at runtime
@@ -100,7 +100,6 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		CertificationProjectID: cfg.GetString(flags.KeyCertProjectID),
 		PyxisHost:              p.pyxisHost,
 	})
-
 	if err != nil {
 		return err
 	}

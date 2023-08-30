@@ -59,7 +59,6 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		CertificationProjectID: cfg.GetString(flags.KeyCertProjectID),
 		PyxisHost:              cfg.GetString(flags.KeyPyxisHost),
 	})
-
 	if err != nil {
 		return err
 	}
