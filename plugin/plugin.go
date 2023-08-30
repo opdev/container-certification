@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/opdev/container-certification/internal/config"
-	"github.com/opdev/container-certification/internal/defaults"
 	preflighterr "github.com/redhat-openshift-ecosystem/openshift-preflight/errors"
 
 	"github.com/Masterminds/semver/v3"
@@ -31,8 +30,6 @@ var _ plugin.Plugin = NewPlugin()
 
 var vers = semver.MustParse("0.0.1")
 
-var pyxisHost = defaults.DefaultPyxisHost
-
 func init() {
 	plugin.Register("check-container", NewPlugin())
 }
@@ -41,6 +38,10 @@ type plug struct {
 	config *viper.Viper
 	image  string
 	engine *crane.CraneEngine
+
+	// pyxisHost is the API endpoint to hit, and is derived from the user configuration
+	// and used for submission.
+	pyxisHost string
 }
 
 func NewPlugin() *plug {
@@ -72,12 +73,12 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 	pol := policy.PolicyContainer
 
 	// determining the pyxis host based on the flags passed in at runtime
-	pyxisHost = config.PyxisHostLookup(cfg.GetString(flags.KeyPyxisEnv), cfg.GetString(flags.KeyPyxisHost))
+	p.pyxisHost = config.PyxisHostLookup(cfg.GetString(flags.KeyPyxisEnv), cfg.GetString(flags.KeyPyxisHost))
 
 	// If we have enough Pyxis information, resolve the policy.
 	if p.hasPyxisData(cfg) {
 		pyxisClient := pyxis.NewPyxisClient(
-			pyxisHost,
+			p.pyxisHost,
 			cfg.GetString(flags.KeyPyxisAPIToken),
 			cfg.GetString(flags.KeyCertProjectID),
 			&http.Client{Timeout: 60 * time.Second},
@@ -97,7 +98,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		DockerConfig:           cfg.GetString(flags.KeyDockerConfig),
 		PyxisAPIToken:          cfg.GetString(flags.KeyPyxisAPIToken),
 		CertificationProjectID: cfg.GetString(flags.KeyCertProjectID),
-		PyxisHost:              pyxisHost,
+		PyxisHost:              p.pyxisHost,
 	})
 
 	if err != nil {
@@ -153,7 +154,7 @@ func (p *plug) Submit(ctx context.Context) error {
 			ctx,
 			p.config.GetString(flags.KeyCertProjectID),
 			p.config.GetString(flags.KeyPyxisAPIToken),
-			pyxisHost,
+			p.pyxisHost,
 		),
 		DockerConfig:     p.config.GetString(flags.KeyDockerConfig),
 		PreflightLogFile: "preflight.log", // TODO: This is probably coming from knex so we need to map this somehow.
