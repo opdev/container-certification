@@ -1,0 +1,36 @@
+name: Go
+
+on:
+  pull_request:
+    branches:
+    - main
+    - release-*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: go.mod
+
+    - name: Tidy
+      run: make tidy
+
+    - name: Vet
+      run: make vet
+
+    - name: Format
+      run: make fmt
+
+    - name: Run golangci linting checks
+      run: make lint
+
+    - name: Test
+      run: make cover
+
+    - name: Build
+      run: make build
