@@ -122,6 +122,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 	return nil
 }
 
+// BindFlags binds all flags necessary for this plugin to run to FlagSet f.
 func (p *plug) BindFlags(f *pflag.FlagSet) *pflag.FlagSet {
 	flags.BindFlagDockerConfigFilePath(f)
 	flags.BindFlagPyxisAPIToken(f)
@@ -136,16 +137,20 @@ func (p *plug) Version() semver.Version {
 	return *vers
 }
 
+// ExecuteChecks will run the container certification policy.
 func (p *plug) ExecuteChecks(ctx context.Context) error {
 	l := logr.FromContextOrDiscard(ctx)
 	l.Info("Execute Checks Called")
 	return p.engine.ExecuteChecks(ctx)
 }
 
+// Results returns the certification results.
 func (p *plug) Results(ctx context.Context) types.Results {
 	return p.engine.Results(ctx)
 }
 
+// Submit submits container certification results to Red Hat Connect if the
+// proper project data was provided
 func (p *plug) Submit(ctx context.Context) error {
 	l := logr.FromContextOrDiscard(ctx)
 	l.Info("Submit called")
