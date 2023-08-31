@@ -7,12 +7,13 @@ import (
 
 	"github.com/bombsimon/logrusr/v4"
 	"github.com/go-logr/logr"
-	"github.com/opdev/container-certification/internal/crane"
-	"github.com/opdev/container-certification/internal/flags"
 	"github.com/opdev/knex/types"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"github.com/opdev/container-certification/internal/crane"
+	"github.com/opdev/container-certification/internal/flags"
 )
 
 type cobraRunEFunc = func(cmd *cobra.Command, args []string) error
@@ -33,7 +34,7 @@ func RunEFunctionWithCheck(ch types.Check) cobraRunEFunc {
 			Checks:       checks,
 			Platform:     platform,
 			IsScratch:    false,
-			Insecure:     false, // TOOD(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
+			Insecure:     false, // TODO(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
 		}
 
 		if err := engine.ExecuteChecks(ctx); err != nil {

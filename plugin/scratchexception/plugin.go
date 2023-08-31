@@ -6,14 +6,15 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-logr/logr"
-	"github.com/opdev/container-certification/internal/checks"
-	"github.com/opdev/container-certification/internal/crane"
-	"github.com/opdev/container-certification/internal/flags"
-	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/knex/plugin/v0"
 	"github.com/opdev/knex/types"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+
+	"github.com/opdev/container-certification/internal/checks"
+	"github.com/opdev/container-certification/internal/crane"
+	"github.com/opdev/container-certification/internal/flags"
+	"github.com/opdev/container-certification/internal/policy"
 )
 
 // Assert that we implement the Plugin interface.
@@ -70,7 +71,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		Checks:       renderedChecks,
 		Platform:     cfg.GetString(flags.KeyPlatform),
 		IsScratch:    pol == policy.PolicyScratch,
-		Insecure:     false, // TOOD(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
+		Insecure:     false, // TODO(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
 	}
 	return nil
 }

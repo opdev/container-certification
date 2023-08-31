@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/knex/types"
+
+	"github.com/opdev/container-certification/internal/pyxis"
 
 	cranev1 "github.com/google/go-containerregistry/pkg/v1"
 	fakecranev1 "github.com/google/go-containerregistry/pkg/v1/fake"

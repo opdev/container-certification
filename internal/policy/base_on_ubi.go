@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/knex/types"
+
+	"github.com/opdev/container-certification/internal/pyxis"
 
 	cranev1 "github.com/google/go-containerregistry/pkg/v1"
 )

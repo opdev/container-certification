@@ -4,30 +4,28 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
-	"crypto/md5"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/fs"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
 	"github.com/go-logr/logr"
 
+	"github.com/opdev/knex/log"
+	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
+
 	"github.com/opdev/container-certification/internal/authn"
 	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/rpm"
-	"github.com/opdev/knex/log"
-	"github.com/opdev/knex/types"
-	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
 
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/google/go-containerregistry/pkg/name"
@@ -289,57 +287,6 @@ func tagDigestBindingInfo(providedIdentifier string, resolvedDigest string) (msg
 			`through your Red Hat Connect portal as you see fit.`,
 		providedIdentifier, resolvedDigest,
 	), false
-}
-
-func generateBundleHash(ctx context.Context, bundlePath string) (string, error) {
-	logger := logr.FromContextOrDiscard(ctx)
-	files := make(map[string]string)
-	fileSystem := os.DirFS(bundlePath)
-
-	hashBuffer := bytes.Buffer{}
-
-	_ = fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return fmt.Errorf("could not read bundle directory: %s: %w", path, err)
-		}
-		if d.Name() == "Dockerfile" {
-			return nil
-		}
-		if d.IsDir() {
-			return nil
-		}
-		filebytes, err := fs.ReadFile(fileSystem, path)
-		if err != nil {
-			return fmt.Errorf("could not read file: %s: %w", path, err)
-		}
-		md5sum := fmt.Sprintf("%x", md5.Sum(filebytes))
-		files[md5sum] = fmt.Sprintf("./%s", path)
-		return nil
-	})
-
-	keys := make([]string, 0, len(files))
-	for k := range files {
-		keys = append(keys, k)
-	}
-
-	sort.Strings(keys)
-	for _, k := range keys {
-		hashBuffer.WriteString(fmt.Sprintf("%s  %s\n", k, files[k]))
-	}
-
-	artifactsWriter := artifacts.WriterFromContext(ctx)
-	if artifactsWriter != nil {
-		_, err := artifactsWriter.WriteFile("hashes.txt", &hashBuffer)
-		if err != nil {
-			return "", fmt.Errorf("could not write hash file to artifacts dir: %w", err)
-		}
-	}
-
-	sum := fmt.Sprintf("%x", md5.Sum(hashBuffer.Bytes()))
-
-	logger.V(log.DBG).Info("md5 sum", "md5sum", sum)
-
-	return sum, nil
 }
 
 // Results will return the results of check execution.

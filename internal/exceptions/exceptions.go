@@ -5,8 +5,9 @@ import (
 	"fmt"
 
 	"github.com/go-logr/logr"
-	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/knex/log"
+
+	"github.com/opdev/container-certification/internal/policy"
 )
 
 // GetContainerPolicyExceptions will query Pyxis to determine if

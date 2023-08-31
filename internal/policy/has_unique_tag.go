@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/opdev/container-certification/internal/authn"
 	"github.com/opdev/knex/types"
+
+	"github.com/opdev/container-certification/internal/authn"
 
 	"github.com/google/go-containerregistry/pkg/crane"
 )

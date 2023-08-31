@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/spf13/pflag"
+
+	"github.com/opdev/container-certification/internal/defaults"
 )
 
 const (

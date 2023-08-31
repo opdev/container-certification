@@ -7,11 +7,17 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/opdev/container-certification/internal/config"
 	preflighterr "github.com/redhat-openshift-ecosystem/openshift-preflight/errors"
+
+	"github.com/opdev/container-certification/internal/config"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-logr/logr"
+	"github.com/opdev/knex/plugin/v0"
+	"github.com/opdev/knex/types"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
 	"github.com/opdev/container-certification/internal/checks"
 	"github.com/opdev/container-certification/internal/crane"
 	"github.com/opdev/container-certification/internal/exceptions"
@@ -19,10 +25,6 @@ import (
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
 	"github.com/opdev/container-certification/internal/submit"
-	"github.com/opdev/knex/plugin/v0"
-	"github.com/opdev/knex/types"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 // Assert that we implement the Plugin interface.
@@ -111,7 +113,7 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 		Checks:       renderedChecks,
 		Platform:     cfg.GetString(flags.KeyPlatform),
 		IsScratch:    pol == policy.PolicyScratch,
-		Insecure:     false, // TOOD(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
+		Insecure:     false, // TODO(Jose): This isn't wired because this probably needs to come from the preflight tool? Maybe not.
 	}
 
 	// Note(Jose) store the config so that Submit can use values from it.

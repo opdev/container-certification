@@ -10,11 +10,12 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/opdev/knex/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
+
 	"github.com/opdev/container-certification/internal/defaults"
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
-	"github.com/opdev/knex/log"
-	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
 
 	"github.com/go-logr/logr"
 )

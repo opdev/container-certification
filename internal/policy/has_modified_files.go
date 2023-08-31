@@ -12,9 +12,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/opdev/container-certification/internal/rpm"
 	"github.com/opdev/knex/log"
 	"github.com/opdev/knex/types"
+
+	"github.com/opdev/container-certification/internal/rpm"
 
 	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"

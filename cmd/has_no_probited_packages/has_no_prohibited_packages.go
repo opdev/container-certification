@@ -3,9 +3,10 @@ package main
 import (
 	"log"
 
+	"github.com/spf13/cobra"
+
 	"github.com/opdev/container-certification/internal/cli"
 	"github.com/opdev/container-certification/internal/policy"
-	"github.com/spf13/cobra"
 )
 
 func main() {

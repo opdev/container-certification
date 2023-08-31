@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/opdev/knex/types"
+
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
-	"github.com/opdev/knex/types"
 )
 
 // Note(Jose): This is ripped directly from internal/engine code
