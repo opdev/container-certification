@@ -7,8 +7,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/opdev/knex/types"
 	"github.com/redhat-openshift-ecosystem/openshift-preflight/version"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	. "github.com/onsi/ginkgo/v2/dsl/core"
 	. "github.com/onsi/gomega"
@@ -126,7 +126,7 @@ var _ = Describe("Pyxis Builder tests", func() {
 					OrgID:       0,
 					Version:     "",
 					ImageID:     "",
-					UserResponse: types.UserResponse{
+					UserResponse: plugin.UserResponse{
 						Image:             "bar",
 						Passed:            false,
 						CertificationHash: "",

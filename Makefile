@@ -1,6 +1,5 @@
 .DEFAULT_GOAL:=help
 
-BINARY?=knex
 IMAGE_BUILDER?=podman
 IMAGE_REPO?=quay.io/opdev
 VERSION=$(shell git rev-parse HEAD)
@@ -16,10 +15,10 @@ run:
 	ARGS={"$(ARGS)":""}
 	go run cmd/$(PROJECT_NAME)/main.go $(ARGS)
 
-.PHONY: build
-build:
-	go build -o $(BINARY) cmd/$(PROJECT_NAME)/main.go
-	@ls | grep -e '^knex$$' &> /dev/null
+# .PHONY: build
+# build:
+# 	go build -o $(BINARY) cmd/$(PROJECT_NAME)/main.go
+# 	@ls | grep -e '^knex$$' &> /dev/null
 
 .PHONY: fmt
 fmt: gofumpt
@@ -31,13 +30,13 @@ tidy:
 	go mod tidy
 	git diff --exit-code
 
-.PHONY: image-build
-image-build:
-	$(IMAGE_BUILDER) build --build-arg release_tag=$(RELEASE_TAG) --build-arg $(PROJECT_NAME)=$(VERSION) -t $(IMAGE_REPO)/knex:$(VERSION) .
+# .PHONY: image-build
+# image-build:
+# 	$(IMAGE_BUILDER) build --build-arg release_tag=$(RELEASE_TAG) --build-arg $(PROJECT_NAME)=$(VERSION) -t $(IMAGE_REPO)/knex:$(VERSION) .
 
-.PHONY: image-push
-image-push:
-	$(IMAGE_BUILDER) push $(IMAGE_REPO)/$(PROJECT_NAME):$(VERSION)
+# .PHONY: image-push
+# image-push:
+# 	$(IMAGE_BUILDER) push $(IMAGE_REPO)/$(PROJECT_NAME):$(VERSION)
 
 .PHONY: test
 test:

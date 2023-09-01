@@ -14,10 +14,6 @@ vuln.html
 *.so
 *.dylib
 bin
-knex
-!cmd/knex
-knex-*
-
 # Config files
 config.yaml
 

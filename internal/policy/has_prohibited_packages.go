@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/opdev/knex/log"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	"github.com/opdev/container-certification/internal/rpm"
 
 	"github.com/go-logr/logr"
 )
 
-var _ types.Check = &HasNoProhibitedPackagesCheck{}
+var _ plugin.Check = &HasNoProhibitedPackagesCheck{}
 
 // HasProhibitedPackages evaluates that the image does not contain prohibited packages,
 // which refers to packages that are not redistributable without an appropriate license.
 type HasNoProhibitedPackagesCheck struct{}
 
-func (p *HasNoProhibitedPackagesCheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *HasNoProhibitedPackagesCheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	pkgList, err := p.getDataToValidate(ctx, imgRef.ImageFSPath)
 	if err != nil {
 		return false, fmt.Errorf("unable to get a list of all packages in the image: %v", err)
@@ -70,8 +70,8 @@ func (p *HasNoProhibitedPackagesCheck) Name() string {
 	return "HasNoProhibitedPackages"
 }
 
-func (p *HasNoProhibitedPackagesCheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p *HasNoProhibitedPackagesCheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checks to ensure that the image in use does not include prohibited packages, such as Red Hat Enterprise Linux (RHEL) kernel packages.",
 		Level:            "best",
 		KnowledgeBaseURL: certDocumentationURL,
@@ -79,8 +79,8 @@ func (p *HasNoProhibitedPackagesCheck) Metadata() types.Metadata {
 	}
 }
 
-func (p *HasNoProhibitedPackagesCheck) Help() types.HelpText {
-	return types.HelpText{
+func (p *HasNoProhibitedPackagesCheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check HasNoProhibitedPackages encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Remove any RHEL packages that are not distributable outside of UBI",
 	}

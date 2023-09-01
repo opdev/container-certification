@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/opdev/knex/types"
-
 	"github.com/opdev/container-certification/internal/pyxis"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	cranev1 "github.com/google/go-containerregistry/pkg/v1"
 )
 
-var _ types.Check = &BasedOnUBICheck{}
+var _ plugin.Check = &BasedOnUBICheck{}
 
 // BasedOnUBICheck evaluates if the provided image is based on the Red Hat Universal Base Image.
 type BasedOnUBICheck struct {
@@ -26,7 +25,7 @@ func NewBasedOnUbiCheck(layerHashChecker layerHashChecker) *BasedOnUBICheck {
 	return &BasedOnUBICheck{LayerHashCheckEngine: layerHashChecker}
 }
 
-func (p *BasedOnUBICheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *BasedOnUBICheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	layerHashes, err := p.getImageLayers(imgRef.ImageInfo)
 	if err != nil {
 		return false, fmt.Errorf("could not get image layers: %v", err)
@@ -73,8 +72,8 @@ func (p *BasedOnUBICheck) Name() string {
 	return "BasedOnUbi"
 }
 
-func (p *BasedOnUBICheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p *BasedOnUBICheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checking if the container's base image is based upon the Red Hat Universal Base Image (UBI)",
 		Level:            "best",
 		KnowledgeBaseURL: certDocumentationURL,
@@ -82,8 +81,8 @@ func (p *BasedOnUBICheck) Metadata() types.Metadata {
 	}
 }
 
-func (p *BasedOnUBICheck) Help() types.HelpText {
-	return types.HelpText{
+func (p *BasedOnUBICheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check BasedOnUbi encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Change the FROM directive in your Dockerfile or Containerfile to FROM registry.access.redhat.com/ubi8/ubi",
 	}

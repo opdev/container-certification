@@ -6,8 +6,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-logr/logr"
-	"github.com/opdev/knex/plugin/v0"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
@@ -95,7 +94,7 @@ func (p *plug) ExecuteChecks(ctx context.Context) error {
 	return p.engine.ExecuteChecks(ctx)
 }
 
-func (p *plug) Results(ctx context.Context) types.Results {
+func (p *plug) Results(ctx context.Context) plugin.Results {
 	return p.engine.Results(ctx)
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/shurcooL/graphql"
 
-	"github.com/opdev/knex/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/log"
 )
 
 const (

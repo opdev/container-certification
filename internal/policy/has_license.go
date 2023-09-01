@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/opdev/knex/log"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	"github.com/go-logr/logr"
 )
@@ -21,13 +21,13 @@ const (
 
 var errLicensesNotADir = errors.New("licenses is not a directory")
 
-var _ types.Check = &HasLicenseCheck{}
+var _ plugin.Check = &HasLicenseCheck{}
 
 // HasLicenseCheck evaluates that the image contains a license definition available at
 // /licenses.
 type HasLicenseCheck struct{}
 
-func (p *HasLicenseCheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *HasLicenseCheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	licenseFileList, err := p.getDataToValidate(ctx, imgRef.ImageFSPath)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) || errors.Is(err, errLicensesNotADir) {
@@ -79,8 +79,8 @@ func (p *HasLicenseCheck) Name() string {
 	return "HasLicense"
 }
 
-func (p *HasLicenseCheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p *HasLicenseCheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checking if terms and conditions applicable to the software including open source licensing information are present. The license must be at /licenses",
 		Level:            "best",
 		KnowledgeBaseURL: certDocumentationURL,
@@ -88,8 +88,8 @@ func (p *HasLicenseCheck) Metadata() types.Metadata {
 	}
 }
 
-func (p *HasLicenseCheck) Help() types.HelpText {
-	return types.HelpText{
+func (p *HasLicenseCheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check HasLicense encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Create a directory named /licenses and include all relevant licensing and/or terms and conditions as text file(s) in that directory.",
 	}

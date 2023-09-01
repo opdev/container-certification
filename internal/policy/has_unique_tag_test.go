@@ -16,7 +16,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/random"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 )
 
 var _ = Describe("UniqueTag", func() {
@@ -50,7 +50,7 @@ var _ = Describe("UniqueTag", func() {
 	Describe("Checking for unique tags", func() {
 		Context("When it has tags other than latest", func() {
 			It("should pass Validate", func() {
-				ok, err := hasUniqueTagCheck.Validate(context.TODO(), types.ImageReference{ImageRegistry: host, ImageRepository: "test/tags", ImageTagOrSha: "sha256:12345"})
+				ok, err := hasUniqueTagCheck.Validate(context.TODO(), plugin.ImageReference{ImageRegistry: host, ImageRepository: "test/tags", ImageTagOrSha: "sha256:12345"})
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ok).To(BeTrue())
 			})
@@ -68,7 +68,7 @@ var _ = Describe("UniqueTag", func() {
 				host = u.Host
 			})
 			It("should throw an error", func() {
-				ok, err := hasUniqueTagCheck.Validate(context.TODO(), types.ImageReference{ImageRegistry: host, ImageRepository: "test/tags", ImageTagOrSha: "sha256:12345"})
+				ok, err := hasUniqueTagCheck.Validate(context.TODO(), plugin.ImageReference{ImageRegistry: host, ImageRepository: "test/tags", ImageTagOrSha: "sha256:12345"})
 				Expect(err).To(HaveOccurred())
 				Expect(ok).To(BeFalse())
 			})
@@ -76,7 +76,7 @@ var _ = Describe("UniqueTag", func() {
 
 		Context("When it has only latest tag", func() {
 			It("should not pass Validate", func() {
-				ok, err := hasUniqueTagCheck.Validate(context.TODO(), types.ImageReference{ImageRegistry: host, ImageRepository: "test/preflight", ImageTagOrSha: "latest"})
+				ok, err := hasUniqueTagCheck.Validate(context.TODO(), plugin.ImageReference{ImageRegistry: host, ImageRepository: "test/preflight", ImageTagOrSha: "latest"})
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ok).To(BeFalse())
 			})
@@ -94,7 +94,7 @@ var _ = Describe("UniqueTag", func() {
 				host = u.Host
 			})
 			It("should throw an error", func() {
-				ok, err := hasUniqueTagCheck.Validate(context.TODO(), types.ImageReference{ImageRegistry: host, ImageRepository: "test/preflight", ImageTagOrSha: "latest"})
+				ok, err := hasUniqueTagCheck.Validate(context.TODO(), plugin.ImageReference{ImageRegistry: host, ImageRepository: "test/preflight", ImageTagOrSha: "latest"})
 				Expect(err).To(HaveOccurred())
 				Expect(ok).To(BeFalse())
 			})
@@ -109,12 +109,12 @@ var _ = Describe("UniqueTag", func() {
 				host = u.Host
 			})
 			It("should pass Validate", func() {
-				ok, err := hasUniqueTagCheck.Validate(context.TODO(), types.ImageReference{ImageRegistry: host, ImageRepository: "test/notags", ImageTagOrSha: "v0.0.1"})
+				ok, err := hasUniqueTagCheck.Validate(context.TODO(), plugin.ImageReference{ImageRegistry: host, ImageRepository: "test/notags", ImageTagOrSha: "v0.0.1"})
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ok).To(BeTrue())
 			})
 			It("should fail Validate", func() {
-				ok, err := hasUniqueTagCheck.Validate(context.TODO(), types.ImageReference{ImageRegistry: host, ImageRepository: "test/notags", ImageTagOrSha: "sha256:12345"})
+				ok, err := hasUniqueTagCheck.Validate(context.TODO(), plugin.ImageReference{ImageRegistry: host, ImageRepository: "test/notags", ImageTagOrSha: "sha256:12345"})
 				Expect(err).To(HaveOccurred())
 				Expect(ok).To(BeFalse())
 			})

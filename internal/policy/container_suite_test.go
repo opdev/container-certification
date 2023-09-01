@@ -4,7 +4,7 @@ import (
 	"io"
 	"testing"
 
-	knextypes "github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/types"
@@ -43,7 +43,7 @@ func (fl FakeLayer) MediaType() (types.MediaType, error) {
 	return "mediatype", nil
 }
 
-var AssertMetaData = func(check knextypes.Check) {
+var AssertMetaData = func(check plugin.Check) {
 	Context("When checking metadata", func() {
 		Context("The check name should not be empty", func() {
 			Expect(check.Name()).ToNot(BeEmpty())

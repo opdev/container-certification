@@ -4,19 +4,18 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/opdev/knex/types"
-
 	"github.com/go-logr/logr"
 	cranev1 "github.com/google/go-containerregistry/pkg/v1"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 )
 
-var _ types.Check = &RunAsNonRootCheck{}
+var _ plugin.Check = &RunAsNonRootCheck{}
 
 // RunAsNonRootCheck evaluates the image to determine that the runtime UID is not 0,
 // which correlates to the root user.
 type RunAsNonRootCheck struct{}
 
-func (p *RunAsNonRootCheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *RunAsNonRootCheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	user, err := p.getDataToValidate(imgRef.ImageInfo)
 	if err != nil {
 		return false, fmt.Errorf("could not get validation data: %v", err)
@@ -56,8 +55,8 @@ func (p *RunAsNonRootCheck) Name() string {
 	return "RunAsNonRoot"
 }
 
-func (p *RunAsNonRootCheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p *RunAsNonRootCheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checking if container runs as the root user because a container that does not specify a non-root user will fail the automatic certification, and will be subject to a manual review before the container can be approved for publication",
 		Level:            "best",
 		KnowledgeBaseURL: certDocumentationURL,
@@ -65,8 +64,8 @@ func (p *RunAsNonRootCheck) Metadata() types.Metadata {
 	}
 }
 
-func (p *RunAsNonRootCheck) Help() types.HelpText {
-	return types.HelpText{
+func (p *RunAsNonRootCheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check RunAsNonRoot encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Indicate a specific USER in the dockerfile or containerfile",
 	}

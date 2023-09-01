@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/opdev/knex/types"
-
 	"github.com/opdev/container-certification/internal/authn"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	"github.com/google/go-containerregistry/pkg/crane"
 )
 
-var _ types.Check = &hasUniqueTagCheck{}
+var _ plugin.Check = &hasUniqueTagCheck{}
 
 func NewHasUniqueTagCheck(dockercfg string) *hasUniqueTagCheck {
 	return &hasUniqueTagCheck{
@@ -27,7 +26,7 @@ type hasUniqueTagCheck struct {
 	dockercfg string
 }
 
-func (p *hasUniqueTagCheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *hasUniqueTagCheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	imgRepo := fmt.Sprintf("%s/%s", imgRef.ImageRegistry, imgRef.ImageRepository)
 
 	tags := make([]string, 0)
@@ -75,8 +74,8 @@ func (p *hasUniqueTagCheck) Name() string {
 	return "HasUniqueTag"
 }
 
-func (p *hasUniqueTagCheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p *hasUniqueTagCheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checking if container has a tag other than 'latest', so that the image can be uniquely identified.",
 		Level:            "best",
 		KnowledgeBaseURL: certDocumentationURL,
@@ -84,8 +83,8 @@ func (p *hasUniqueTagCheck) Metadata() types.Metadata {
 	}
 }
 
-func (p *hasUniqueTagCheck) Help() types.HelpText {
-	return types.HelpText{
+func (p *hasUniqueTagCheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check HasUniqueTag encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Add a tag to your types. Consider using Semantic Versioning. https://semver.org/",
 	}

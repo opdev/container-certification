@@ -18,9 +18,9 @@ import (
 
 	"github.com/go-logr/logr"
 
-	"github.com/opdev/knex/log"
-	"github.com/opdev/knex/types"
 	"github.com/redhat-openshift-ecosystem/openshift-preflight/artifacts"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	"github.com/opdev/container-certification/internal/authn"
 	"github.com/opdev/container-certification/internal/defaults"
@@ -48,7 +48,7 @@ type CraneEngine struct {
 	Image string
 	// Checks is an array of all checks to be executed against
 	// the image provided.
-	Checks []types.Check
+	Checks []plugin.Check // TODO: This probably needs to be local to this project, and not the pluggable codebase.
 
 	// Platform is the container platform to use. E.g. amd64.
 	Platform string
@@ -63,8 +63,8 @@ type CraneEngine struct {
 	// the registry crane connects with.
 	Insecure bool
 
-	imageRef types.ImageReference
-	results  types.Results
+	imageRef plugin.ImageReference
+	results  plugin.Results
 }
 
 func export(img cranev1.Image, w io.Writer) error {
@@ -175,7 +175,7 @@ func (c *CraneEngine) ExecuteChecks(ctx context.Context) error {
 	}
 
 	// store the image internals in the engine image reference to pass to validations.
-	c.imageRef = types.ImageReference{
+	c.imageRef = plugin.ImageReference{
 		ImageURI:        c.Image,
 		ImageFSPath:     containerFSPath,
 		ImageInfo:       img,
@@ -223,18 +223,31 @@ func (c *CraneEngine) ExecuteChecks(ctx context.Context) error {
 
 		if err != nil {
 			logger.WithValues("result", "ERROR", "err", err.Error()).Info("check completed", "check", ch.Name())
-			c.results.Errors = appendUnlessOptional(c.results.Errors, types.Result{Check: ch, ElapsedTime: checkElapsedTime})
+			c.results.Errors = appendUnlessOptional(c.results.Errors, plugin.Result{Check: plugin.CheckInfo{
+				Name:     ch.Name,
+				Metadata: ch.Metadata,
+				Help:     ch.Help,
+			}, ElapsedTime: checkElapsedTime})
 			continue
 		}
 
 		if !checkPassed {
 			logger.WithValues("result", "FAILED").Info("check completed", "check", ch.Name())
-			c.results.Failed = appendUnlessOptional(c.results.Failed, types.Result{Check: ch, ElapsedTime: checkElapsedTime})
+			c.results.Failed = appendUnlessOptional(c.results.Failed, plugin.Result{Check: plugin.CheckInfo{
+				Name:     ch.Name,
+				Metadata: ch.Metadata,
+				Help:     ch.Help,
+			}, ElapsedTime: checkElapsedTime})
 			continue
 		}
 
 		logger.WithValues("result", "PASSED").Info("check completed", "check", ch.Name())
-		c.results.Passed = appendUnlessOptional(c.results.Passed, types.Result{Check: ch, ElapsedTime: checkElapsedTime})
+		c.results.Passed = appendUnlessOptional(c.results.Passed, plugin.Result{Check: plugin.CheckInfo{
+			Name:     ch.Name,
+			Metadata: ch.Metadata,
+			Help:     ch.Help,
+		}, ElapsedTime: checkElapsedTime})
+
 	}
 
 	if len(c.results.Errors) > 0 || len(c.results.Failed) > 0 {
@@ -259,7 +272,7 @@ func (c *CraneEngine) ExecuteChecks(ctx context.Context) error {
 	return nil
 }
 
-func appendUnlessOptional(results []types.Result, result types.Result) []types.Result {
+func appendUnlessOptional(results []plugin.Result, result plugin.Result) []plugin.Result {
 	if result.Check.Metadata().Level == "optional" {
 		return results
 	}
@@ -290,7 +303,7 @@ func tagDigestBindingInfo(providedIdentifier string, resolvedDigest string) (msg
 }
 
 // Results will return the results of check execution.
-func (c *CraneEngine) Results(ctx context.Context) types.Results {
+func (c *CraneEngine) Results(ctx context.Context) plugin.Results {
 	return c.results
 }
 
@@ -365,7 +378,7 @@ func untar(ctx context.Context, dst string, r io.Reader) error {
 // struct. The file is written at path certification.DefaultCertImageFilename.
 //
 //nolint:unparam // ctx is unused. Keep for future use.
-func writeCertImage(ctx context.Context, imageRef types.ImageReference) error {
+func writeCertImage(ctx context.Context, imageRef plugin.ImageReference) error {
 	logger := logr.FromContextOrDiscard(ctx)
 
 	config, err := imageRef.ImageInfo.ConfigFile()

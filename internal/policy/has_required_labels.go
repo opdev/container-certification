@@ -4,22 +4,21 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/opdev/knex/types"
-
 	"github.com/go-logr/logr"
 	cranev1 "github.com/google/go-containerregistry/pkg/v1"
-	"github.com/opdev/knex/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 )
 
 var requiredLabels = []string{"name", "vendor", "version", "release", "summary", "description"}
 
-var _ types.Check = &HasRequiredLabelsCheck{}
+var _ plugin.Check = &HasRequiredLabelsCheck{}
 
 // HasRequiredLabelsCheck evaluates the image manifest to ensure that the appropriate metadata
 // labels are present on the image asset as it exists in its current container registry.
 type HasRequiredLabelsCheck struct{}
 
-func (p *HasRequiredLabelsCheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *HasRequiredLabelsCheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	labels, err := p.getDataForValidate(imgRef.ImageInfo)
 	if err != nil {
 		return false, fmt.Errorf("could not retrieve image labels: %v", err)
@@ -55,8 +54,8 @@ func (p *HasRequiredLabelsCheck) Name() string {
 	return "HasRequiredLabel"
 }
 
-func (p *HasRequiredLabelsCheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p *HasRequiredLabelsCheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checking if the required labels (name, vendor, version, release, summary, description) are present in the container metadata.",
 		Level:            "good",
 		KnowledgeBaseURL: certDocumentationURL,
@@ -64,8 +63,8 @@ func (p *HasRequiredLabelsCheck) Metadata() types.Metadata {
 	}
 }
 
-func (p *HasRequiredLabelsCheck) Help() types.HelpText {
-	return types.HelpText{
+func (p *HasRequiredLabelsCheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check Check HasRequiredLabel encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Add the following labels to your Dockerfile or Containerfile: name, vendor, version, release, summary, description",
 	}

@@ -3,7 +3,7 @@ package pyxis
 import (
 	"time"
 
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 )
 
 type CertificationInput struct {
@@ -130,7 +130,7 @@ type TestResults struct {
 	OrgID       int    `json:"org_id,omitempty"`
 	Version     string `json:"version,omitempty"`
 	ImageID     string `json:"image_id,omitempty"`
-	types.UserResponse
+	plugin.UserResponse
 }
 
 type Artifact struct {

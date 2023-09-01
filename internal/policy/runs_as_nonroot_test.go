@@ -7,7 +7,7 @@ import (
 	fakecranev1 "github.com/google/go-containerregistry/pkg/v1/fake"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 )
 
 func userConfigFile(user string) (*cranev1.ConfigFile, error) {
@@ -37,7 +37,7 @@ func configFileWithRootUsername() (*cranev1.ConfigFile, error) {
 var _ = Describe("RunAsNonRoot", func() {
 	var (
 		runAsNonRoot RunAsNonRootCheck
-		imageRef     types.ImageReference
+		imageRef     plugin.ImageReference
 	)
 
 	BeforeEach(func() {

@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/opdev/knex/types"
-
 	"github.com/opdev/container-certification/internal/policy"
 	"github.com/opdev/container-certification/internal/pyxis"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 )
 
 // Note(Jose): This is ripped directly from internal/engine code
@@ -20,10 +19,10 @@ type ContainerCheckConfig struct {
 }
 
 // InitializeContainerChecks returns the appropriate checks for policy p given cfg.
-func InitializeContainerChecks(_ context.Context, p policy.Policy, cfg ContainerCheckConfig) ([]types.Check, error) {
+func InitializeContainerChecks(_ context.Context, p policy.Policy, cfg ContainerCheckConfig) ([]plugin.Check, error) {
 	switch p {
 	case policy.PolicyContainer:
-		return []types.Check{
+		return []plugin.Check{
 			&policy.HasLicenseCheck{},
 			policy.NewHasUniqueTagCheck(cfg.DockerConfig),
 			&policy.MaxLayersCheck{},
@@ -38,7 +37,7 @@ func InitializeContainerChecks(_ context.Context, p policy.Policy, cfg Container
 				&http.Client{Timeout: 60 * time.Second})),
 		}, nil
 	case policy.PolicyRoot:
-		return []types.Check{
+		return []plugin.Check{
 			&policy.HasLicenseCheck{},
 			policy.NewHasUniqueTagCheck(cfg.DockerConfig),
 			&policy.MaxLayersCheck{},
@@ -52,7 +51,7 @@ func InitializeContainerChecks(_ context.Context, p policy.Policy, cfg Container
 				&http.Client{Timeout: 60 * time.Second})),
 		}, nil
 	case policy.PolicyScratch:
-		return []types.Check{
+		return []plugin.Check{
 			&policy.HasLicenseCheck{},
 			policy.NewHasUniqueTagCheck(cfg.DockerConfig),
 			&policy.MaxLayersCheck{},

@@ -13,8 +13,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-logr/logr"
-	"github.com/opdev/knex/plugin/v0"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
@@ -145,7 +144,7 @@ func (p *plug) ExecuteChecks(ctx context.Context) error {
 }
 
 // Results returns the certification results.
-func (p *plug) Results(ctx context.Context) types.Results {
+func (p *plug) Results(ctx context.Context) plugin.Results {
 	return p.engine.Results(ctx)
 }
 
@@ -163,7 +162,7 @@ func (p *plug) Submit(ctx context.Context) error {
 			p.pyxisHost,
 		),
 		DockerConfig:     p.config.GetString(flags.KeyDockerConfig),
-		PreflightLogFile: "preflight.log", // TODO: This is probably coming from knex so we need to map this somehow.
+		PreflightLogFile: "preflight.log", // TODO: This is probably coming from preflight so we need to map this somehow
 		PyxisEnv:         p.config.GetString(flags.KeyPyxisEnv),
 	}
 

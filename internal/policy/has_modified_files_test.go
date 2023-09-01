@@ -10,7 +10,7 @@ import (
 	rpmdb "github.com/knqyf263/go-rpmdb/pkg"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 	"github.com/sirupsen/logrus"
 )
 
@@ -346,7 +346,7 @@ var _ = Describe("HasModifiedFiles", func() {
 
 	When("calling the top level Validate", func() {
 		It("should fail with an invalid ImageReference", func() {
-			passed, err := hasModifiedFiles.Validate(context.TODO(), types.ImageReference{})
+			passed, err := hasModifiedFiles.Validate(context.TODO(), plugin.ImageReference{})
 			Expect(err).To(HaveOccurred())
 			Expect(passed).To(BeFalse())
 		})

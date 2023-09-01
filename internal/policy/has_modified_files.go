@@ -12,8 +12,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/opdev/knex/log"
-	"github.com/opdev/knex/types"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/log"
+	"github.com/redhat-openshift-ecosystem/openshift-preflight/x/plugin/v0"
 
 	"github.com/opdev/container-certification/internal/rpm"
 
@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-var _ types.Check = &HasModifiedFilesCheck{}
+var _ plugin.Check = &HasModifiedFilesCheck{}
 
 // HasModifiedFilesCheck evaluates that no files from the base layer have been modified by
 // subsequent layers by comparing the file list installed by Packages against the file list
@@ -58,7 +58,7 @@ type packageFilesRef struct {
 }
 
 // Validate runs the check of whether any Red Hat files were modified
-func (p *HasModifiedFilesCheck) Validate(ctx context.Context, imgRef types.ImageReference) (bool, error) {
+func (p *HasModifiedFilesCheck) Validate(ctx context.Context, imgRef plugin.ImageReference) (bool, error) {
 	fs := afero.NewOsFs()
 	layerIDs, packageFiles, packageDist, err := p.gatherDataToValidate(ctx, imgRef, fs)
 	if err != nil {
@@ -72,7 +72,7 @@ func (p *HasModifiedFilesCheck) Validate(ctx context.Context, imgRef types.Image
 // (packageFilesRef.LayerPackageFiles) installed via packages (packageFilesRef.LayerPackages)
 // from the container image, and the list of files (packageFilesRef.LayerFiles) modified/added
 // via layers in the types.
-func (p *HasModifiedFilesCheck) gatherDataToValidate(ctx context.Context, imgRef types.ImageReference, fs afero.Fs) ([]string, map[string]packageFilesRef, string, error) {
+func (p *HasModifiedFilesCheck) gatherDataToValidate(ctx context.Context, imgRef plugin.ImageReference, fs afero.Fs) ([]string, map[string]packageFilesRef, string, error) {
 	logger := logr.FromContextOrDiscard(ctx)
 
 	layerDir, err := afero.TempDir(fs, "", "rpm-layers-")
@@ -255,15 +255,15 @@ func (p HasModifiedFilesCheck) Name() string {
 	return "HasModifiedFiles"
 }
 
-func (p HasModifiedFilesCheck) Help() types.HelpText {
-	return types.HelpText{
+func (p HasModifiedFilesCheck) Help() plugin.CheckHelpText {
+	return plugin.CheckHelpText{
 		Message:    "Check HasModifiedFiles encountered an error. Please review the preflight.log file for more information.",
 		Suggestion: "Do not modify any files installed by RPM in the base Red Hat layer",
 	}
 }
 
-func (p HasModifiedFilesCheck) Metadata() types.Metadata {
-	return types.Metadata{
+func (p HasModifiedFilesCheck) Metadata() plugin.CheckMetadata {
+	return plugin.CheckMetadata{
 		Description:      "Checks that no files installed via RPM in the base Red Hat layer have been modified",
 		Level:            "best",
 		KnowledgeBaseURL: certDocumentationURL,
