@@ -123,7 +123,8 @@ func (p *plug) Init(ctx context.Context, cfg *viper.Viper, args []string) error 
 }
 
 // BindFlags binds all flags necessary for this plugin to run to FlagSet f.
-func (p *plug) BindFlags(f *pflag.FlagSet) *pflag.FlagSet {
+func (p *plug) Flags() *pflag.FlagSet {
+	f := pflag.NewFlagSet("container-certification", pflag.ContinueOnError)
 	flags.BindFlagDockerConfigFilePath(f)
 	flags.BindFlagPyxisAPIToken(f)
 	flags.BindFlagPyxisEnv(f)
